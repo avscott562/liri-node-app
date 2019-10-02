@@ -2,16 +2,22 @@
 //DotEnv
 require("dotenv").config();
 
+//connect to keys.js
+let keys = require("./keys.js");
+
 //Axios
 let axios = reqiure("axios");
 
-//spotify
-let Spotify = require("node-spotify-api");
+//fs
+let fs = require("fs");
 
-let spotify = new Spotify({
-    id: "<your spotify client id>",
-    secret: "<your spotify client secret>"
-});
+//spotify
+// let Spotify = require("node-spotify-api");
+
+// let spotify = new Spotify({
+//     id: "<your spotify client id>",
+//     secret: "<your spotify client secret>"
+// });
 
 //moment
 let moment = require("moment");
@@ -27,3 +33,4 @@ moment().format();
 
 
 // You'll use Axios to grab data from the OMDB API and the Bands In Town API
+
