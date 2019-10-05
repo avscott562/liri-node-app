@@ -19,50 +19,60 @@ let moment = require("moment");
 //fs
 const fs = require("fs");
 
+let action = "";
+let search = [];
+let searchTerm = "";
 
 //grab action and search items from terminal
-let action = process.argv[2].toLowerCase();
-console.log(action);
-let search = process.argv.splice(3);
-let searchTerm= search.join("+").toLowerCase();
-console.log("Searching for " + searchTerm);
+if (process.argv[2]) {
+    action = process.argv[2].toLowerCase();
+}
 
+if (process.argv[3]) {
+    search = process.argv.splice(3);
+    console.log("this is hte search " + search);
+    searchTerm= search.join("+").toLowerCase();
+}
 
-//switch statement to call function based upon user requested action
-switch(action) {
+runBot(action, searchTerm, search)
+
+function runBot(act, find, s) {
+    //switch statement to call function based upon user requested action
+switch(act) {
     case "concert-this":
-        concertThis();
+        concertThis(find);
         break;
     
     case "spotify-this-song":
-        spotifyThisSong();
+        spotifyThisSong(find, s);
         break;
 
     case "movie-this":
-        movieThis();
+        movieThis(find, s);
         break;
 
     case "do-what-it-says":
-        console.log("do what it says function")
+        doWhatItSays();
         break;
 
     default:
         console.log("Please choose a valid action: concert-this, spotify-this-song, movie-this or do-what-it-says.");
 }
+}
 
 
 // concert-this
-function concertThis() {
+function concertThis(find) {
 
-    axios.get("https://rest.bandsintown.com/artists/" + searchTerm + "/events?app_id=codingbootcamp")
+    if (find != "") {
+        axios.get("https://rest.bandsintown.com/artists/" + find + "/events?app_id=codingbootcamp")
     .then(function(response) {
         let concerts = response.data;
 
         if (concerts.length !== 0) {
             for (i=0; i<concerts.length; i++) {
-                // console.log (concerts[0]);
                 let eventInfo = concerts[i];
-                let eventDate = moment(eventInfo.datetime.slice(0, 9)).format("MM-DD-YYYY");
+                let eventDate = moment(eventInfo.datetime.slice(0, 10)).format("MM-DD-YYYY");
                 console.log ("Event # " + (i+1) + "\nVenue Name: " + eventInfo.venue.name + "\nVenue Location: " + eventInfo.venue.city + "\nEvent Date: " + eventDate);
                 console.log("\n");
             }
@@ -74,13 +84,14 @@ function concertThis() {
     .catch(function(error) {
         console.log(error);
     })
+    } else {
+        console.log("Please enter an artist.")
+    }
 }
 
 // spotify-this-song
-function spotifyThisSong() {
-    if (search.length === 0) {
-        console.log("No search term provided");
-        //track%3Athe+sign%20artist%3Aace+of+base"
+function spotifyThisSong(find, s) {
+    if (s.length === 0) {
         spotify.search({
             type: "track",
             query: "track:the sign artist:ace of base"
@@ -93,8 +104,7 @@ function spotifyThisSong() {
             console.log(err);
         })
     } else {
-        searchTerm = searchTerm.replace("+", " ");
-        console.log("spotify search 2 " + searchTerm);
+        searchTerm = find.replace("+", " ");
         spotify.search({
             type: "track",
             query: searchTerm
@@ -110,14 +120,11 @@ function spotifyThisSong() {
 }
 
 // movie-this
-function movieThis() {
-    if (search.length === 0) {
-        console.log("No search term provided");
+function movieThis(find, s) {
+    if (s.length === 0) {
         searchTerm = "mr+nobody";
-        console.log(searchTerm);
     } else {
-        searchTerm = searchTerm.replace(".", "");
-        console.log("this is movie search term " + searchTerm);
+        searchTerm = find.replace(".", "");
     }
     
     axios.get("https://www.omdbapi.com/?t=" + searchTerm + "&apikey=trilogy")
@@ -131,5 +138,36 @@ function movieThis() {
 }
 
 // do-what-it-says
+function doWhatItSays() {
+    fs.readFile("random.txt", "utf8", function(error, data) {
+        if (error) {
+            return console.log(error);
+        }
+
+        console.log(data);
+
+        let readArr = data.split(",");
+
+        // console.log(readArr);
+        action = readArr[0];
+        
+        let str= readArr[1].toString();
+
+        let strL = str.length;
+
+        let newStr = str.substring(1, strL-1);
+        // console.log(newStr);
+
+        search = newStr.split(" ");
+        searchTerm = search.join("+");
+
+        // console.log(action);
+        // console.log(search);
+        // console.log(searchTerm);
+
+        runBot(action, searchTerm, search);
+
+    })
+}
 
 
