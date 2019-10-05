@@ -9,7 +9,7 @@ const keys = require("./keys.js");
 let Spotify = require("node-spotify-api");
 let spotify = new Spotify(keys.spotify);
 
-//Axios
+//Axios - use to grab data from the OMDB API and the Bands In Town API
 const axios = require("axios");
 
 //moment
@@ -19,12 +19,6 @@ let moment = require("moment");
 //fs
 const fs = require("fs");
 
-
-
-// let spotify = new Spotify({
-//     id: "<your spotify client id>",
-//     secret: "<your spotify client secret>"
-// });
 
 //grab action and search items from terminal
 let action = process.argv[2].toLowerCase();
@@ -48,19 +42,14 @@ switch(action) {
         movieThis();
         break;
 
+    case "do-what-it-says":
+        console.log("do what it says function")
+        break;
+
     default:
         console.log("Please choose a valid action: concert-this, spotify-this-song, movie-this or do-what-it-says.");
 }
 
-
-
-// let getArtist = async (artist) => {
-//     let response = await axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
-//     console.log(response.data)
-// }
-
-
-// You'll use Axios to grab data from the OMDB API and the Bands In Town API
 
 // concert-this
 function concertThis() {
@@ -97,7 +86,8 @@ function spotifyThisSong() {
             query: "track:the sign artist:ace of base"
         })
         .then(function(response) {
-            console.log(response.tracks.items[0]);
+            let song = response.tracks.items[0];
+            console.log("Artist: " + song.artists[0].name + "\nSong Title: " + song.name + "\nSpotify Link: " + song.preview_url + "\nThis song is on the album " + song.album.name+ "." );
         })
         .catch(function(err) {
             console.log(err);
@@ -110,7 +100,8 @@ function spotifyThisSong() {
             query: searchTerm
         })
         .then(function(response) {
-            console.log(response.tracks.items[0]);
+            let song = response.tracks.items[0];
+            console.log("Artist: " + song.artists[0].name + "\nSong Title: " + song.name + "\nSpotify Link: " + song.preview_url + "\nThis song is on the album " + song.album.name+ "." );
         })
         .catch(function(err) {
             console.log(err);
