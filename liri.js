@@ -30,7 +30,7 @@ const fs = require("fs");
 let action = process.argv[2].toLowerCase();
 console.log(action);
 let search = process.argv.splice(3);
-let searchTerm= search.join("+");
+let searchTerm= search.join("+").toLowerCase();
 console.log("Searching for " + searchTerm);
 
 
@@ -41,12 +41,12 @@ switch(action) {
         break;
     
     case "spotify-this-song":
-            console.log("run spotify function");
-            break;
+        spotifyThisSong();
+        break;
 
     case "movie-this":
-            movieThis();
-            break;
+        movieThis();
+        break;
 
     default:
         console.log("Please choose a valid action: concert-this, spotify-this-song, movie-this or do-what-it-says.");
@@ -88,7 +88,35 @@ function concertThis() {
 }
 
 // spotify-this-song
-
+function spotifyThisSong() {
+    if (search.length === 0) {
+        console.log("No search term provided");
+        //track%3Athe+sign%20artist%3Aace+of+base"
+        spotify.search({
+            type: "track",
+            query: "track:the sign artist:ace of base"
+        })
+        .then(function(response) {
+            console.log(response.tracks.items[0]);
+        })
+        .catch(function(err) {
+            console.log(err);
+        })
+    } else {
+        searchTerm = searchTerm.replace("+", " ");
+        console.log("spotify search 2 " + searchTerm);
+        spotify.search({
+            type: "track",
+            query: searchTerm
+        })
+        .then(function(response) {
+            console.log(response.tracks.items[0]);
+        })
+        .catch(function(err) {
+            console.log(err);
+        })
+    }
+}
 
 // movie-this
 function movieThis() {
@@ -96,6 +124,9 @@ function movieThis() {
         console.log("No search term provided");
         searchTerm = "mr+nobody";
         console.log(searchTerm);
+    } else {
+        searchTerm = searchTerm.replace(".", "");
+        console.log("this is movie search term " + searchTerm);
     }
     
     axios.get("https://www.omdbapi.com/?t=" + searchTerm + "&apikey=trilogy")
@@ -108,6 +139,6 @@ function movieThis() {
     })
 }
 
-
-
 // do-what-it-says
+
+
