@@ -39,6 +39,10 @@ switch(action) {
     case "concert-this":
         concertThis();
         break;
+    
+    case "spotify-this-song":
+            console.log("run spotify function");
+            break;
 
     case "movie-this":
             movieThis();
@@ -84,6 +88,7 @@ function concertThis() {
 }
 
 // spotify-this-song
+
 
 // movie-this
 function movieThis() {
