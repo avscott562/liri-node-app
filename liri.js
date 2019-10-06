@@ -30,7 +30,6 @@ if (process.argv[2]) {
 
 if (process.argv[3]) {
     search = process.argv.splice(3);
-    console.log("this is hte search " + search);
     searchTerm= search.join("+").toLowerCase();
 }
 
